@@ -1,0 +1,294 @@
+\documentclass[10pt,a4paper]{report}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{mathabx}
+\usepackage{physics}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.15}
+\usepackage{mathrsfs}
+\usetikzlibrary{arrows}
+
+\usepackage[margin=0.7in]{geometry}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\Hil}{\mathcal{H}}
+\newcommand{\cre}{\hat{a}^\dag}
+\newcommand{\ann}{\hat{a}}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{definition}{Definition}
+\newtheorem*{remark}{Remark}
+
+\author{Dharmik Patel \\ University of Toronto}
+\title{APM421 \\Mathematical Foundations of Quantum Mechanics}
+\date{Fall 2023}
+
+\setlength\parindent{0pt}
+
+\makeatletter% Set distance from top of page to first float
+\setlength{\@fptop}{5pt}
+\makeatother
+
+
+
+\begin{document}
+\maketitle
+\tableofcontents
+
+
+\section{Introduction}
+
+\section{Lecture 1}
+\subsection{Introduction to the course}
+The course content can be roughly broken down as follows:
+\begin{itemize}
+    \item Quantum Mechanics (40\%):
+    \begin{itemize}
+        \item Basic quantum mechanics:
+        \begin{itemize}
+            \item The Schrödinger equation
+            \item Atoms and molecules
+        \end{itemize}
+        \item Advanced quantum mechanics:
+        \begin{itemize}
+            \item Density functional theory
+        \end{itemize}
+    \end{itemize}
+    \item Quantum Information Science (60\%):
+    \begin{itemize}
+        \item Quantum information
+        \item Quantum channels
+        \item Information processing
+    \end{itemize}
+\end{itemize}
+
+\subsection{What does a physical theory look like?}
+Now that that is out of the way, we begin by understanding some of the structural parallels between the theories of classical mechanics and quantum mechanics. In other words, we try to understand the question of \textit{what a physical theory looks like in general}.
+
+
+\begin{table}[h]
+    \tiny
+    \centering
+    \resizebox{\columnwidth}{!}{%
+    \begin{tabular}{@{}|c|c|c|@{}}
+    \toprule
+                    & Classical Mechanics                         & Quantum Mechanics             \\ \midrule
+    State Space & \( \R^{3n}_{x} \times \R^{3n}_{k} \) (position and momentum) & \( L^2 (\R^{3n}_{x}) \)                           \\ \midrule
+    State Evolution & Via Newton's laws / Hamilton's formulations & Via Schrödinger equation      \\ \midrule
+    Observables & Real functions on \( \R^{3n}_{x} \times \R^{3n}_{k} \)       & Self-adjoint operators on \( L^2 (\R^{3n}_{x}) \) \\ \midrule
+    Measurements    & Deterministic interpretations               & Probabilistic interpretations \\ \bottomrule
+    \end{tabular}%
+    }
+    \caption{\label{theorystructurecomparison} Theory structure comparison between CM and QM.}
+    \end{table}
+
+\subsection{State spaces}
+
+The state space $L^2$ is defined\footnote{The $\R^3$ and the $\dd x$ are not ordinarily written when writing the definition. A matter of colloquial comfort, perhaps.} as follows:
+
+\begin{definition}
+    The state space $L^2 (\R^3)$ is described by
+    \begin{equation}\label{l2definition}
+        L^2 (\R^3) = \left\{\psi\colon \R^3 \to \C \mid \int_{\R^3} |\psi(x)|^2\dd x < \infty\right\}.
+    \end{equation}
+    Generally, on a measure space $X$, the set of \textbf{square-integrable} $L^2$ functions is an $L^2$ space. Together with the $L^2$ \textbf{inner product} with respect to a \textbf{measure} $\mu$, written as 
+    \begin{equation}\label{l2innprod}
+        \langle f,g \rangle = \int_X {f}{g} \dd \mu,
+    \end{equation}
+    the $L^2$ space forms a \textbf{Hilbert space}. Fret not, all shall be revealed in a matter of time.
+\end{definition}
+
+\textbf{Note:} The integral in this definition is indeed Lebesgue (recall, the definition of the Lebesgue integral via signed functions.\footnote{If $f$ is a measurable function of the set $E$ to $\R \cup \{\pm \infty\}$ then we may write \(f = f_+ - f_-\) where \begin{equation*}
+    f_+(x)=
+        \begin{cases}
+            f(x) & \text{if } f(x)>0\\
+            0 & \text{if otherwise,} 
+        \end{cases}
+    \end{equation*}
+    \begin{equation*}
+        f_-(x)=
+            \begin{cases}
+                -f(x) & \text{if } f(x)<0\\
+                0 & \text{if otherwise,} 
+            \end{cases}
+        \end{equation*}
+both $f_+, f_-$ are non-negative measurable functions, and $|f| = f_+ + f_-$. Now, the Lebesgue integral of $f$ exists if $\min \left(\int f_+ \dd \mu, \int f_- \dd \mu\right) < \infty$. Then, define $$\int f \dd \mu = \int f_+ \dd \mu - \int f_- \dd \mu.$$ If $\int |f| \dd \mu < \infty$ then $f$ is Lebesgue integrable.}) However, it does not matter very much since $\psi(x)$ is taken to be everywhere defined, continuous, and $C^\infty$\footnote{Cohen-Tannoudji et al. Quantum Mechanics Volume 1, pg. 88} which makes its value equal under both integrals.\\
+
+Here we list a few properties of the state space for our mathematical convenience:
+
+\begin{definition}[Properties of the state space $L^2 (\R^3)$]
+The state space has the following properties:
+    \begin{enumerate}
+        \item \textbf{Vector space:} $L^2$ is a vector space, i.e. additivity and homogeneity hold on its elements. 
+        \begin{equation}\label{additivity}
+            \psi, \phi \in L^2 \implies \alpha \psi + \beta \phi \in L^2 \forall \alpha, \beta \in \C
+        \end{equation}
+        \begin{equation}\label{homogeneity}
+            \int |\psi + \phi|^2 \leq 2 \int \left(|\psi|^2 + |\phi|^2\right) = 2 \int |\psi|^2 + 2 \int |\phi|^2 < \infty
+        \end{equation}
+        \item \textbf{Normed space:} $L^2$ is a normed space, i.e. the following hold:
+        \begin{equation}\label{norm}
+            \| f\| = \left(\int |f|^2 \right)^\frac{1}{2}
+        \end{equation}
+        \begin{equation}\label{zerocondition}
+            \| f\| = 0 \iff f = 0, \| f\| \geq 0
+        \end{equation}
+        \begin{equation}\label{triangle}
+            \| f + g\| \leq \| f\| + \| g\|
+        \end{equation}
+        \item \textbf{Complete normed space/Banach space:} $L^2 (\R^3)$ is a complete normed space, i.e.
+        \begin{equation}\label{completenormedspacelimit}
+            \| f_m - f_n \| \to 0 \implies \exists f \in L^2 \colon \lim f_n = f
+        \end{equation}
+        \item \textbf{Hilbert space:}  $L^2$ is a Hilbert space, i.e. it is a complex inner product space, equipped with an inner product
+        \begin{equation}\label{innerprod}
+            \langle f, g \rangle = \int \bar{f}g
+        \end{equation}
+        with the following properties:
+        \begin{equation}\label{positivity}
+            \langle f, f \rangle \geq 0
+        \end{equation}
+        \begin{equation}\label{zeroconditionhilbert}
+            \langle f, f \rangle = 0 \iff f = 0
+        \end{equation}
+        \begin{equation}\label{linearityinarg}
+            \langle f, \alpha g_1 + \beta g_2 \rangle = \bar{\alpha}\langle f, g_1\rangle +  \bar{\beta} \langle f, g_2\rangle \quad \text{ and } \quad \langle f, \lambda g \rangle = \bar{\lambda} \langle f, g \rangle \quad  \forall \lambda \in \C
+        \end{equation}
+        Note that it is linear with respect to both $\R$ and $\C$ in the second argument, and simply linear with respect to $\R$ in the first. Reversing arguments leads to complex conjugacy taking effect:
+        \begin{equation}\label{conjugacy}
+            \langle f, g \rangle = \overline{\langle g, f \rangle}
+        \end{equation}
+        \item \textbf{Cauchy-Schwarz Inequality:} $L^2$ is equipped with the Cauchy-Schwarz inequality. 
+        \begin{equation}\label{cauchyschwarz}
+        | \langle f, g \rangle | \leq \| f \| \| g \|
+        \end{equation}
+    \end{enumerate}
+\end{definition}
+
+\subsection{The dynamics of QM}
+
+The central equation of QM is (as you are probably already quite aware of), \textbf{the Schrödinger equation:}\footnote{Which I will call simply ``SE'' from now on, lest we forget the man's horrid crimes.}
+
+\begin{equation}\label{SE}
+    i \hbar \partial_t \psi = - \frac{\hbar ^2}{2m} \Delta_x \psi + V \psi
+\end{equation}
+where $\hbar$ is the reduced Planck constant: Planck's constant ($\sim 6.6\times 10^{-27}$ erg seconds) scaled by $1/2\pi$. The units are those of \textit{action}: energy multiplied by time. $m$ is (drumroll, please) the mass of the particle. $\Delta$ is the Laplacian operator:
+
+\begin{definition}[Laplacian operator] The Laplacian operator is defined here in 3 dimensions:
+    \begin{equation}\label{laplacianeqdef}
+        \Delta = \sum_{j=1}^{3} \partial_{x_j}^2
+    \end{equation}
+The operator itself is a map:
+    \begin{equation}\label{laplacian}
+        \Delta \colon \psi(x,t) \mapsto \sum \delta_{x_j}^2 \psi (x,t)
+    \end{equation}
+\end{definition}
+
+The term $V\psi = (V\psi)(x,t)$ is really just $V(x)\psi(x,t)$ where $V(x)$ is the \textbf{potential}. Mathematically, it is a \textit{multiplication operator} for $V(x)$:
+
+\begin{equation}\label{vmult}
+    V \colon \psi(x,t) \mapsto V(x) \psi(x,t)
+\end{equation}
+
+$\psi$ is considered to be a `path' in $L^2 (\R^3)$ called a \textbf{wavefunction}. We define it as follows:
+
+\begin{definition}[Wavefunction $\psi$] The state of a particle is described by a $\C$-valued function of position and time $\psi(x,t)$ where $x \in \R^3$ and $t \in \R$. 
+    \begin{equation}\label{wavefnmathdef}
+        \psi \colon \R^3_x \times \R_t \to \C \quad \text{ such that } \quad \int |\psi(x,t)|^2 \dd x < \infty
+    \end{equation}
+\end{definition}
+
+We now have two properties: $\psi \in L^2 \implies$ (1) $\Delta \psi \in L^2$ and (2) $\partial_t \psi \in L^2$. Property (1) tells us that $\psi$ belongs to $H^2 (\R^3)$, the \textit{Sobolev space} of order 2. 
+
+\subsection{The properties of the SE}
+We first have \textbf{causality.} If $\psi(\cdot, t_0)$ is known, then \textit{given uniqueness}, we can find $\psi(\cdot, t)$ where $t>t_0$.\\
+Secondly, \textbf{superposition.} If $\psi$ and $\phi$ are solutions of the SE, then $\alpha \psi + \beta \phi$ is also a solution (for $\alpha, \beta \in \C$). This means the SE is \textit{linear}.\\
+Thirdly, \textbf{correspondence.} In the classical limit, quantum mechanics as governed by the SE should 'look like' the classical mechanics we know and love.
+
+\subsubsection{Interpretations of $\psi(x,t)$}
+$\psi$ yields `probabilities of measurements of physical observables'.\footnote{This is not accurate wording, but it suffices for now.} Mathematically, the \textit{probability of measuring $x$ and finding it to be in $\Omega \subset \R^3$ is:}
+\begin{equation}
+    \text{Prob}_\psi (x\in \Omega) = \int_{\Omega} |\psi|^2
+\end{equation}
+where the normalisation condition is $\int_\Omega |\psi|^2 = 1$ to ensure the probability value is limited to something between 0 and 1. Similarly for momentum,
+\begin{equation}
+    \text{Prob}_\psi (p\in Q) = \int_{Q} |\widehat{\psi}|^2
+\end{equation}
+where $Q\subset \R^3_k$, and $\widehat{\psi}$ is the Fourier transform (FT) of $\psi$. We say that $|\psi(x,t)|^2$ is the \textit{probability distribution} for $x$ at some fixed $t$.\\
+
+We have so far seen the SE to be a (1) linear, (2) 2nd order, and (3) evolutionary PDE. We can also write it using the following:
+
+\begin{definition}[Schrödinger operator $H$] The SE can be simply written as
+    \begin{equation}\label{hoperatoralgeqn}
+        i \hbar \partial_t \psi = H \psi
+    \end{equation}
+where 
+    \begin{equation}\label{hoperatormathdef}
+        H \colon \psi(x,t) \mapsto - \frac{\hbar^2}{2m} \Delta_x \psi(x,t) + V(x) \psi(x,t)
+    \end{equation}
+where $H$ is a linear operator. We write 
+    \begin{equation}\label{hoperator}
+        H = - \frac{\hbar^2}{2m} \Delta + V
+    \end{equation}
+as a sum of individual operators.
+\end{definition}
+$H$ can also be called the `Quantum Hamiltonian' but this is unmotivated as of this lecture.
+
+\subsection{A quick digression (into operator theory)}
+We've seen a variety of operators on $L^2 (\R^3)$ so far: the multiplication operator as seen in (\ref{vmult}), the differentiation and Laplacian operators ($\partial_{x_j}$ and $\Delta$ respectively) as seen in (\ref{laplacianeqdef}), and the Schrödinger operator as seen in (\ref{hoperator}). Generally, operators are rules with domains. For example, consider a general operator $A$ on $\mathcal{H}$ (a Hilbert space), which is the domain of $A$. We write the domain of $A$ as:
+
+\begin{equation}\label{domainA}
+    D(A) = \{f\in \mathcal{H} \mid Af \in \mathcal{H}\}
+\end{equation}
+
+Some examples of domains:
+\begin{itemize}
+    \item \textbf{Multiplication operator $M_V$.}
+        \begin{equation}
+            D(M_V) = L^2 (\R^3) \qquad \text{(if } V \text{ is bounded.)}
+        \end{equation}
+        If $V$ is bounded and $f\in L^2$, then $Vf \in L^2$.
+    \item \textbf{Differentiation operator $\partial_{x_j}$.}
+    \begin{equation}
+        D(\partial_{x_j}) = \{f\in L^2 \mid \partial_{x_j} f \in L^2\}
+    \end{equation}
+    If $f \sim \|x\|_2^{-1} e^{-|x|} \in L^2 (\R^3)$, then $\partial_{x_j} f \notin L^2$.
+    \item \textbf{Laplacian operator $\Delta$.} 
+    \begin{equation}
+        D(\Delta) = \{f\in L^2 \mid \Delta f \in L^2\}
+    \end{equation}
+    Note that the Sobolev space $H^2 (\R^3) := D (\Delta)$.
+    \item \textbf{Multiplication by $|x|^2$} (unbounded operator). $|x|^2 \colon \psi (x) \mapsto |x|^2 \psi(x)$
+    \begin{equation}
+        D(|x|^2) = \{f\in L^2 \mid |x|^2 f \in L^2\}
+    \end{equation}
+    Note that this leads to $\int |x|^4 |f|^2 \dd x < \infty$.
+    \item \textbf{Multiplication by $|k|^2$} (in the Fourier transform\footnote{I will alternatively write it as either the wide hat or the fancy F, depending on how whimsical I am feeling at the time of writing.}) which is equivalent to the operator
+    \begin{equation}
+        |p|^2 \colon \psi(x) \mapsto \mathcal{F}^{-1}{\left( |k|^2 \mathcal{F}\left({\psi (k)}\right)\right)}
+    \end{equation}
+    Here, $\mathcal{F}(\psi(k)) = \frac{1}{(2\pi)^{3/2}} \int e^{-ik \cdot x} \psi(x)$, and $\mathcal{F}^{-1}$ represents the inverse Fourier transform (IFT).
+    The domain is 
+    \begin{equation}
+        D(|p|^2) = \{\psi \in L^2 (\R^3) \mid |k|^2 \overline{\psi} (k) \in L^2 (\R^3)\}
+    \end{equation}
+\end{itemize}
+
+
+
+
+
+
+
+
+
+
+\end{document}
